@@ -302,3 +302,20 @@ export async function deleteCommunity(communityId: string) {
     throw error;
   }
 }
+
+export async function fetchSuggestedCommunities() {
+  try {
+    connectToDB()
+
+    const communities = await Community.find({
+      $expr: {
+        $gt: [{$size: '$threads'}, 0]
+      }
+    })
+
+    return communities
+  } catch (error) {
+    console.error("Error fetching suggested communities:", error);
+    throw error;
+  }
+}

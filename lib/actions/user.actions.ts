@@ -94,7 +94,6 @@ export async function fetchUserPosts(userId: string) {
   }
 }
 
-// Almost similar to Thead (search + pagination) and Community (search + pagination)
 export async function fetchUsers({
   userId,
   searchString = "",
@@ -178,6 +177,22 @@ export async function getActivity(userId: string) {
     return replies;
   } catch (error) {
     console.error("Error fetching replies: ", error);
+    throw error;
+  }
+}
+
+export async function fetchSuggestedUsers({userId}: {userId: string}) {
+  try {
+    connectToDB()
+
+    const users = User.find({
+      $expr: {
+        $gt:[{$size: '$threads'}, 3]
+      }
+    })
+    return users
+  } catch (error) {
+    console.error("Error fetching suggested users:", error);
     throw error;
   }
 }
